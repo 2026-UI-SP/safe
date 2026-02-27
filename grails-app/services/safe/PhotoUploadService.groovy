@@ -22,8 +22,8 @@ class PhotoUploadService implements GrailsConfigurationAware {
     }
 
     def uploadFile(PhotoFileCommand photoFileCmd) {
-        println ""; println ""; 
-        println "Uploading file: ${photoFileCmd.photoFile.originalFilename} to folder: ${photoFolder}"
+        // println ""; println ""; 
+        // println "Uploading file: ${photoFileCmd.photoFile.originalFilename} to folder: ${photoFolder}"
 
         File folder = new File(photoFolder)
         if ( !folder.exists() ) {

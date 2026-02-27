@@ -34,16 +34,15 @@ class PhotoController {
             return
         }
 
-        // try { 
-        //     // add safeService.moderatePhoto(photoFileCmd.photoFile) Here. 
-        //     Photo photo = photoUploadService.uploadFile(photoFileCmd)
-        // } catch (ValidationException e) {
-        //     respond photo.errors, view:'create'
-        //     return
-        // }
-
         if (photoFileCmd.hasErrors()) {
             respond photoFileCmd.errors, model:[photo:new Photo()], view:'create'  // Need to pass a new Photo to avoid GSP errors.
+            return
+        }
+
+        try { 
+            safeService.moderatePhoto(photoFileCmd.photoFile)
+        } catch (ValidationException e) {
+            respond photo.errors, view:'create'
             return
         }
 
