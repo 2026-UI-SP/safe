@@ -15,5 +15,5 @@ out/
 .env
 content_safe/*
 **/.env
-
+bin
 
