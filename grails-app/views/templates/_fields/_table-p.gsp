@@ -15,8 +15,10 @@
                     </g:if>
                     <g:else>
                         <td>
+
                             <!-- <f:display bean="${bean}" property="${p.property}"  displayStyle="${displayStyle?:'table'}" theme="${theme}"/> -->
                             <img src="<g:createLink controller="photo" action="photoImage" id="${bean.id}"/>" width="100"/>
+                            
                         </td>
                     </g:else>
                 </g:each>
