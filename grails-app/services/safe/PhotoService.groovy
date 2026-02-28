@@ -15,6 +15,4 @@ interface PhotoService {
 
     Photo save(Photo photo)
 
-    Photo save(String photoPath, String photoContentType, long createTime) // RLP adds
-
 }

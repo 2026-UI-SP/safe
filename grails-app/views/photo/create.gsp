@@ -31,8 +31,7 @@
                     </ul>
                     </g:hasErrors>
                     <g:uploadForm resource="${this.photo}" method="POST">
-                        <g:hiddenField name="id" value="${this.pointOfInterest?.id}" />
-                        <g:hiddenField name="version" value="${this.pointOfInterest?.version}" />
+
                         <input type="file" name="photoFile" />
                         
                         <fieldset class="buttons">

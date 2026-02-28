@@ -21,35 +21,41 @@ class PhotoUploadService implements GrailsConfigurationAware {
         photoFolder = co.getRequiredProperty('contentFolder')
     }
 
-    def uploadFile(PhotoFileCommand photoFileCmd) {
-        // println ""; println ""; 
-        // println "Uploading file: ${photoFileCmd.photoFile.originalFilename} to folder: ${photoFolder}"
-
+    def uploadFile(Photo photo) {
+        //  println ""; println ""; 
+        //  println "uploadFile called with photo: ${photo}"
+         if ( photo.hasErrors() ) {
+             respond photo.errors, model: [photo: photo], view:'create'  
+         }
+        
         File folder = new File(photoFolder)
         if ( !folder.exists() ) {
             println "Creating folder: ${photoFolder}"
             folder.mkdirs()
         }
 
-        
-        MultipartFile file = photoFileCmd.photoFile
-        // Path to write the file
+        // Write the file to the file system
+        MultipartFile file = photo.photoFile
         long time = Instant.now().toEpochMilli();
-        String extension = file.originalFilename.substring(file.originalFilename.lastIndexOf('.')+1)
+        String extension = file.originalFilename.substring(file.originalFilename.lastIndexOf('.') + 1)
         String path = "${photoFolder}/${time}.${extension}"
-        // Writes the file 
-        photoFileCmd.photoFile.transferTo(new File(path))
+        photo.photoFile.transferTo(new File(path))
 
-        String photoPath = "${path}"
-        Photo photo = photoService.save(photoPath, file.contentType, time)
-        println "Photo saved: ${photo}"
+        // Complete the Photo domain object
+        photo.photoPath = path
+        photo.photoContentType = file.contentType
+        photo.createTime = time
+
+        // Save the Photo domain object
+        photo = photoService.save(photo)  
 
         if ( !photo || photo.hasErrors() ) {
             println "Error saving photo: ${photo?.errors}"
             File f = new File(path)
             f.delete()
+            respond photo?.errors ?: [photo: photo], model: [photo: photo], view:'create'  // Just respond with the photo and its errors. The view can access the photo and its errors directly.
+            return
         }
-        println "Returning photo: ${photo}"
         photo
     }
 }

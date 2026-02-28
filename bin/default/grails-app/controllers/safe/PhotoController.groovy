@@ -2,6 +2,9 @@ package safe
 
 import grails.validation.ValidationException
 import static org.springframework.http.HttpStatus.*
+import org.springframework.validation.FieldError
+
+import org.springframework.web.multipart.MultipartFile
 
 class PhotoController {
 
@@ -21,32 +24,37 @@ class PhotoController {
     }
 
     def create() {
-        // PhotoFileCommand photoFileCmd = new PhotoFileCommand()
-        // respond photoFileCmd, view:'create'
-        respond new Photo()
+        // println ""; println ""; println "create called with params: ${params}"
+        respond new Photo(params)  
     }
 
-    def save(PhotoFileCommand photoFileCmd) {
-        println ""; println ""; 
-        println "PhotoController.save called with file: ${photoFileCmd?.photoFile?.originalFilename}"
-        if (photoFileCmd == null) {
+    def save(Photo photo) {
+        // println ""; println ""; println "save called with photo: ${photo}"; println "save called with params: ${params}"
+        if (photo == null) {
             notFound()
             return
         }
 
-        if (photoFileCmd.hasErrors()) {
-            respond photoFileCmd.errors, model:[photo:new Photo()], view:'create'  // Need to pass a new Photo to avoid GSP errors.
+        if (photo.hasErrors()) {  
+            respond photo.errors, model: [photo: photo], view:'create'  // Just respond with the photo and its errors. The view can access the photo and its errors directly.
             return
+        }
+        else {
+            // Get the uploaded file from the request and set it to the photo object. 
+            // This is needed for validation and for passing to the service layer.
+            photo.photoFile = request.getFile('photoFile')  
         }
 
         try { 
-            safeService.moderatePhoto(photoFileCmd.photoFile)
+            // This can throw a ValidationException if the photo is not safe.
+            safeService.moderatePhoto(photo)  
         } catch (ValidationException e) {
-            respond photo.errors, view:'create'
+            respond photo, model: [photo: photo], view:'create'  
             return
         }
 
-        Photo photo = photoUploadService.uploadFile(photoFileCmd)
+        // Save the file and enter the photo metadata in the DB.
+        photo = photoUploadService.uploadFile(photo)
 
         if (photo == null) {
             notFound()

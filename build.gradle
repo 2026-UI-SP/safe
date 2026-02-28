@@ -78,6 +78,7 @@ dependencies {
     
     // RLP adds:
     implementation "com.azure:azure-ai-contentsafety:1.0.0"
+    implementation "com.azure:azure-ai-vision-face:1.0.0-beta.2"
     // implementation 'io.github.cdimascio:dotenv-java:3.2.0' // Requires java 11 or above
     implementation 'io.github.cdimascio:dotenv-java:2.3.2' // For java 8
 }
