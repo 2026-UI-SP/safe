@@ -23,7 +23,7 @@
                     <g:if test="${flash.message}">
                         <div class="message" role="status">${flash.message}</div>
                     </g:if>
-                    <f:table collection="${photoList}" />
+                    <f:table collection="${photoList}" template="table-p" maxProperties="2"/>
 
                     <g:if test="${photoCount > params.int('max')}">
                     <div class="pagination">
