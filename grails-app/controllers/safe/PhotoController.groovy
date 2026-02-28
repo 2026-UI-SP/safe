@@ -23,6 +23,16 @@ class PhotoController {
         respond photoService.get(id)
     }
 
+    def photoImage(Long id) {
+        Photo photo = photoService.get(id)
+        if (!photo) {
+            notFound()
+            return
+        }
+        def file = new File(photo.photoPath)
+        render file: file, contentType: photo.photoContentType
+    }
+
     def create() {
         // println ""; println ""; println "create called with params: ${params}"
         respond new Photo(params)  

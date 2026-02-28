@@ -25,6 +25,9 @@
                     <div class="message" role="status">${flash.message}</div>
                     </g:if>
                     <f:display bean="photo" />
+                    <g:if test="${this.photo.photoPath}">
+                        <img src="<g:createLink controller="photo" action="photoImage" id="${this.photo.id}"/>" width="400"/>
+                    </g:if>
                     <g:form resource="${this.photo}" method="DELETE">
                         <fieldset class="buttons">
                             <g:link class="edit" action="edit" resource="${this.photo}"><g:message code="default.button.edit.label" default="Edit" /></g:link>
