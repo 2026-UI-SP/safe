@@ -27,16 +27,8 @@
 
                     <ul class="errors" role="alert">
                         <g:eachError bean="${this.photo}" var="error">
-                            <li <g:if test="${error in org.springframework.validation.FieldError}">data-field-id="${error.field}"</g:if>>
-                                
-                                <!-- RLP changed to properly display photoFile validation error -->
-                                <g:if test="${error.field == 'photoFile'}">
-                                    <g:message code="photo.photoFile.validator.message" default="${error}"/>
-                                </g:if>
-                                <g:else>
-                                     <g:message error="${error}"/>
-                                </g:else>
-
+                            <li <g:if test="${error in org.springframework.validation.FieldError}">data-field-id="${error.field}"</g:if>>                     
+                                <g:message error="${error}"/>
                             </li>
                         </g:eachError>
                     </ul>
