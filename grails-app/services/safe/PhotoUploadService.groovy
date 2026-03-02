@@ -24,9 +24,6 @@ class PhotoUploadService implements GrailsConfigurationAware {
     def uploadFile(Photo photo) {
         //  println ""; println ""; 
         //  println "uploadFile called with photo: ${photo}"
-         if ( photo.hasErrors() ) {
-             respond photo.errors, model: [photo: photo], view:'create'  
-         }
         
         File folder = new File(photoFolder)
         if ( !folder.exists() ) {
