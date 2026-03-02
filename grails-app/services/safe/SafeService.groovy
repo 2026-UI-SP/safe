@@ -20,7 +20,8 @@ import com.azure.ai.vision.face.models.FaceDetectionResult;
 import com.azure.ai.vision.face.models.FaceRecognitionModel;
 
 // For Grails Promises
-import static grails.async.Promises.*
+import static grails.async.Promises.task
+import static grails.async.Promises.waitAll
 import grails.async.Promise
 
 
