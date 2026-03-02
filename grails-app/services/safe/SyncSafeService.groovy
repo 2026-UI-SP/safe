@@ -19,9 +19,6 @@ import com.azure.ai.vision.face.models.FaceDetectionModel;
 import com.azure.ai.vision.face.models.FaceDetectionResult;
 import com.azure.ai.vision.face.models.FaceRecognitionModel;
 
-// For Grails Promises
-import static grails.async.Promises.*
-import grails.async.Promise
 
 
 import org.springframework.web.multipart.MultipartFile
@@ -29,7 +26,7 @@ import grails.validation.ValidationException;
 import grails.gorm.transactions.Transactional;
 
 @Transactional
-class SafeService {
+class SyncSafeService {
 
     def contentSafe
     def faceDetect
@@ -57,40 +54,40 @@ class SafeService {
         byte[] photoBytes = photo.photoFile.getBytes();
         BinaryData photoData = BinaryData.fromBytes(photoBytes);
 
-        // Content Safety Image Moderation    
-        Promise<AnalyzeImageResult> contentResults = task{ 
-            ContentSafetyImageData image = new ContentSafetyImageData();
-            image.setContent(photoData);  
-            contentSafe.client.analyzeImage(new AnalyzeImageOptions(image)) 
-        };
+        // Content Safety Image Moderation
+        ContentSafetyImageData image = new ContentSafetyImageData();
+        image.setContent(photoData);   
+
+        AnalyzeImageResult response = contentSafe.client.analyzeImage(new AnalyzeImageOptions(image));
+
+        int severitySum = 0;
+        for (ImageCategoriesAnalysis result : response.getCategoriesAnalysis()) {
+            severitySum += result.getSeverity()
+        }
+
+        if (severitySum > 0) {
+
+            throw new ValidationException("photo", "photo.unsafe", "Improper photo. Please use a different photo and try again.");
+        }
 
         // Face Detection
         // See https://learn.microsoft.com/en-us/dotnet/api/azure.ai.vision.face.faceclient.detect?view=azure-dotnet-preview#azure-ai-vision-face-faceclient-detect(system-binarydata-azure-ai-vision-face-facedetectionmodel-azure-ai-vision-face-facerecognitionmodel-system-boolean-system-collections-generic-ienumerable((azure-ai-vision-face-faceattributetype))-system-nullable((system-boolean))-system-nullable((system-boolean))-system-nullable((system-int32))-system-threading-cancellationtoken)
         
-        Promise<List<FaceDetectionResult>> faceResults = task{ 
-            faceDetect.client.detect(
-                photoData,
-                FaceDetectionModel.DETECTION_03, 
-                FaceRecognitionModel.RECOGNITION_04,
-                false, // returnFaceId, do not need.
-                null, // FaceAttributeTyes, do not need. 
-                false, // returnFaceLandmarks, do not need.
-                false, // returnFaceAttributes, do not need.
-                60); // faceIdTimeToLive in seconds. The shortest time.
-            };
+        // BinaryData photoData = BinaryData.fromStream(photoFile.getInputStream());
+        // byte[] photoBytes = photoFile.getBytes();
+        BinaryData faceData = BinaryData.fromBytes(photoBytes);
 
-        waitAll(contentResults, faceResults);
-        
-        // Check content safety results
-        int severitySum = 0;
-        for (ImageCategoriesAnalysis result : contentResults.get().getCategoriesAnalysis()) {
-            severitySum += result.getSeverity()
-        }
-        if (severitySum > 0) {
-            throw new ValidationException("photo", "photo.unsafe", "Improper photo. Please use a different photo and try again.");
-        }
-        // Check face detection results
-        if (faceResults.get().size() > 0) {
+        List<FaceDetectionResult> results = faceDetect.client.detect(
+            faceData,
+            FaceDetectionModel.DETECTION_03, 
+            FaceRecognitionModel.RECOGNITION_04,
+            false, // returnFaceId, do not need.
+            null, // FaceAttributeTyes, do not need. 
+            false, // returnFaceLandmarks, do not need.
+            false, // returnFaceAttributes, do not need.
+            60); // faceIdTimeToLive in seconds. The shortest time.
+
+        if (results.size() > 0) {
             photo.errors.rejectValue("photoFile", "photo.unsafe", "Photo contains a face. Please use a different photo and try again.");
             throw new ValidationException("Photo is not safe", photo.errors);
         }
