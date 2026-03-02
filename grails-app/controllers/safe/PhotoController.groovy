@@ -66,16 +66,6 @@ class PhotoController {
         // Save the file and enter the photo metadata in the DB.
         photo = photoUploadService.uploadFile(photo)
 
-        if (photo == null) {
-            notFound()
-            return
-        }
-
-        if (photo.hasErrors()) {
-            respond photo.errors, model:[photo:photo], view:'create'
-            return
-        }
-
         request.withFormat {
             form multipartForm {
                 flash.message = message(code: 'default.created.message', args: [message(code: 'photo.label', default: 'Photo'), photo.id])
