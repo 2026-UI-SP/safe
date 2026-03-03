@@ -44,11 +44,9 @@ class PhotoController {
             notFound()
             return
         }
-        // The Domain validation dose not actural throw a ValidationException, 
+        // The Domain validation does not acturally throw a ValidationException, 
         // so we need to check for errors 
         if (photo.hasErrors()) {  
-            // Domain validation dose not thromw a ValidationException, 
-            // so we need to check for errors 
             respond photo.errors, model: [photo: photo], view:'create'  
             return
         }

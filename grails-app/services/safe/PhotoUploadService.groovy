@@ -50,7 +50,7 @@ class PhotoUploadService implements GrailsConfigurationAware {
             println "Error saving photo: ${photo?.errors}"
             File f = new File(path)
             f.delete()
-            respond photo?.errors ?: [photo: photo], model: [photo: photo], view:'create'  // Just respond with the photo and its errors. The view can access the photo and its errors directly.
+            respond photo?.errors ?: [photo: photo], model: [photo: photo], view:'create' 
             return
         }
         photo
