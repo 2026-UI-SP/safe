@@ -39,7 +39,7 @@ class PhotoController {
     }
 
     def save(Photo photo) {
-        println ""; println ""; println "save called with photo: ${photo}"; println "save called with params: ${params}"
+        // println ""; println ""; println "save called with photo: ${photo}"; println "save called with params: ${params}"
         if (photo == null) {
             notFound()
             return
