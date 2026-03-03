@@ -39,20 +39,18 @@ class PhotoController {
     }
 
     def save(Photo photo) {
-        // println ""; println ""; println "save called with photo: ${photo}"; println "save called with params: ${params}"
+        println ""; println ""; println "save called with photo: ${photo}"; println "save called with params: ${params}"
         if (photo == null) {
             notFound()
             return
         }
-
+        // The Domain validation dose not actural throw a ValidationException, 
+        // so we need to check for errors 
         if (photo.hasErrors()) {  
-            respond photo.errors, model: [photo: photo], view:'create'  // Just respond with the photo and its errors. The view can access the photo and its errors directly.
+            // Domain validation dose not thromw a ValidationException, 
+            // so we need to check for errors 
+            respond photo.errors, model: [photo: photo], view:'create'  
             return
-        }
-        else {
-            // Get the uploaded file from the request and set it to the photo object. 
-            // This is needed for validation and for passing to the service layer.
-            photo.photoFile = request.getFile('photoFile')  
         }
 
         try { 
