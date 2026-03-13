@@ -150,4 +150,4 @@ grails:
 ---
 environments:
     development:
-        contentFolder: /home/pastel/data/research/aws-photo-moderation/workspace/azure-learn/safe/content_safe
+        contentFolder: /home/pastel/data/research/azure-photo-moderation/workspace/azure-learn/safe/content_safe

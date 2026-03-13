@@ -51,10 +51,12 @@ class SafeService {
     }
     
     def moderatePhoto(Photo photo) {
+        // println(""); println(""); println("moderatePhoto called with photoFile.class: " + photo.photoFile.getClass()); 
         // BinaryData photoData = BinaryData.fromStream(photoFile.getInputStream());
         // For some reason, using fromStream causes the Face Service to throw an error 
         // about invalid image data. Using fromBytes instead works fine. 
         // Also this will save data in memory after reading. But not ideal for large photos.
+        
         byte[] photoBytes = photo.photoFile.getBytes();
         BinaryData photoData = BinaryData.fromBytes(photoBytes);
 
@@ -95,5 +97,7 @@ class SafeService {
             photo.errors.rejectValue("photoFile", "photo.unsafe", "Photo contains a face. Please use a different photo and try again.");
             throw new ValidationException("Photo is not safe", photo.errors);
         }
+
+        
     }   
 }
